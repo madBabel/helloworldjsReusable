@@ -65,6 +65,9 @@ jobs:
     outputs:
       environment: ${{ steps.set-env.outputs.environment }}
     steps:  
+         - name: Checkout Repository
+           uses: actions/checkout@v3
+           
          - name: Determine Environment
            id: set-env
            uses: ./.github/actions/detect-environment           
