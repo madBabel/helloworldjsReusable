@@ -22,7 +22,10 @@ async function run() {
     }
 
     const progressBar = renderProgressBar(completedSteps, totalSteps);
-    core.info(`Progreso del workflow: ${progressBar}`);
+
+    // 📌 Muestra una anotación en la UI de GitHub
+    console.log(`::notice title=Progreso del Workflow::${progressBar}`);
+
   } catch (error) {
     core.setFailed(error.message);
   }
