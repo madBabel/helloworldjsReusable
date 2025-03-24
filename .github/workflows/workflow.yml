@@ -31,6 +31,11 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
 
+      - name: Progress 20%
+        uses: ./.github/actions/progress-status
+        with:
+          total_steps: 10
+          completed_steps: 2 
 
       - name: Cache Node.js dependencies
         uses: actions/cache@v4
@@ -45,7 +50,13 @@ jobs:
 
       - name: Install Dependencies
         if:  ${{steps.cache.outputs.cache-hit != 'true'}}
-        run: npm install       
+        run: npm install      
+        
+      - name: Progress 40%
+        uses: ./.github/actions/progress-status
+        with:
+          total_steps: 10
+          completed_steps: 4 
 
       - name: obtain App Name Version for artifact
         id: app-info
@@ -60,11 +71,25 @@ jobs:
         run: |        
             npm run build          
 
+      - name: Progress 60%
+        uses: ./.github/actions/progress-status
+        with:
+          total_steps: 10
+          completed_steps: 6 
+
+
+
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.app-info.outputs.artifact_name }}
           path: ${{inputs.base_path || '.'}}/build/
+
+      - name: Progress 80%
+        uses: ./.github/actions/progress-status
+        with:
+          total_steps: 10
+          completed_steps: 8      
 
   detect-environment:
     runs-on: ubuntu-latest
@@ -95,8 +120,20 @@ jobs:
           name: ${{ needs.build.outputs.artifact_name }}
           path: build/
 
+      - name: Progress 90%
+        uses: ./.github/actions/progress-status
+        with:
+          total_steps: 10
+          completed_steps: 8        
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./build       
+          publish_dir: ./build      
+          
+      - name: Progress 100%
+        uses: ./.github/actions/progress-status
+        with:
+          total_steps: 10
+          completed_steps: 10        
