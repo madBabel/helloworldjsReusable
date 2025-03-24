@@ -23,8 +23,10 @@ async function run() {
 
     const progressBar = renderProgressBar(completedSteps, totalSteps);
 
-    // 📌 Muestra una anotación en la UI de GitHub
-    console.log(`::notice title=Progreso del Workflow::${progressBar}`);
+    // 🔄 Simula eliminar la anotación anterior ocultando logs previos
+    console.log("::group::Actualizando progreso del workflow");
+    console.log("::notice title=Progreso del Workflow::" + progressBar);
+    console.log("::endgroup::");
 
   } catch (error) {
     core.setFailed(error.message);
