@@ -1,0 +1,14 @@
+name: "Progress Status"
+description: "Muestra el progreso general del workflow como una barra de progreso"
+
+inputs:
+  total_steps:
+    description: "Número total de pasos en el workflow"
+    required: true
+  completed_steps:
+    description: "Número de pasos completados hasta ahora"
+    required: true
+
+runs:
+  using: "node16"
+  main: "index.js"
