@@ -9,7 +9,7 @@ on:
 jobs:
 
   buildAndDetectEnvironment:
-    uses: ./.gitHub/workflows/BuildWF.yml
+    uses: ./.github/workflows/BuildWF.yml
     with:
       useCache: true
   
