@@ -1,0 +1,60 @@
+ build:
+    runs-on: ubuntu-latest    
+    outputs:
+      artifact_name: ${{ steps.app-info.outputs.artifact_name }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+
+
+      - name: Cache Node.js dependencies
+        uses: actions/cache@v4
+        id: cache
+        with:
+          path: |
+            node_modules
+            ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install Dependencies
+        if:  ${{steps.cache.outputs.cache-hit != 'true'}}
+        run: npm install
+
+      - name: obtain App Name Version for artifact
+        id: app-info
+        run: |
+          APP_NAME=$(jq -r .name package.json)
+          APP_VERSION=$(jq -r .version package.json)
+          echo "APP_NAME=$APP_NAME" >> $GITHUB_OUTPUT
+          echo "APP_VERSION=$APP_VERSION" >> $GITHUB_OUTPUT
+          echo "artifact_name=$APP_NAME-$APP_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Build Project 
+        run: |        
+            npm run build          
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.app-info.outputs.artifact_name }}
+          path: build/
+
+  detect-environment:
+    runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.set-env.outputs.environment }}
+    steps:    
+
+      - name: Determine Environment
+        id: set-env
+        run: |
+          if [ "${{ github.ref }}" == "refs/heads/main" ]; then
+            echo "environment=production" > $GITHUB_OUTPUT
+          else
+            echo "environment=staging" >> $GITHUB_OUTPUT
+          fi          
