@@ -8,6 +8,7 @@ on:
         description: working dir
         type: string
         default: '.'
+  push: 
 
 jobs:
   
@@ -64,16 +65,19 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       environment: ${{ steps.set-env.outputs.environment }}
-    steps:    
+    steps:  
+         - name: Determine Environment
+           id: set-env
+           uses: ./.github/actions/detect-environment           
 
-      - name: Determine Environment
-        id: set-env
-        run: |
-          if [ "${{ github.ref }}" == "refs/heads/main" ]; then
-            echo "environment=production" > $GITHUB_OUTPUT
-          else
-            echo "environment=staging" >> $GITHUB_OUTPUT
-          fi                
+     # - name: Determine Environment
+     #   id: set-env
+     #   run: |
+     #     if [ "${{ github.ref }}" == "refs/heads/main" ]; then
+     #       echo "environment=production" > $GITHUB_OUTPUT
+     #     else
+     #       echo "environment=staging" >> $GITHUB_OUTPUT
+     #     fi                
 
 
 
