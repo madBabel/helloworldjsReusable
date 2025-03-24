@@ -3,10 +3,18 @@ name: Deploy React APP
 on:
 
   workflow_call: 
+    inputs:
+      base_path: 
+        description: working dir
+        type: string
+        default: '.'
 
 jobs:
   
   build:
+    defaults:
+      run:
+        working-directory: ${{inputs.base_path}}
     runs-on: ubuntu-latest    
     outputs:
       artifact_name: ${{ steps.app-info.outputs.artifact_name }}
@@ -23,7 +31,7 @@ jobs:
         id: cache
         with:
           path: |
-            node_modules
+            ${{inputs.base_path}}/node_modules
             ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
@@ -31,7 +39,7 @@ jobs:
 
       - name: Install Dependencies
         if:  ${{steps.cache.outputs.cache-hit != 'true'}}
-        run: npm install
+        run: npm install       
 
       - name: obtain App Name Version for artifact
         id: app-info
@@ -50,7 +58,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.app-info.outputs.artifact_name }}
-          path: build/
+          path: ${{inputs.base_path}}/build/
 
   detect-environment:
     runs-on: ubuntu-latest
