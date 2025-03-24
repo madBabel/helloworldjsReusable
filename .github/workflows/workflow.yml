@@ -10,12 +10,11 @@ on:
         default: '.'
   push: 
 
-jobs:
-  
+jobs:  
   build:
     defaults:
       run:
-        working-directory: ${{inputs.base_path}}
+        working-directory: ${{inputs.base_path || '.'}}
     runs-on: ubuntu-latest    
     outputs:
       artifact_name: ${{ steps.app-info.outputs.artifact_name }}
@@ -32,7 +31,7 @@ jobs:
         id: cache
         with:
           path: |
-            ${{inputs.base_path}}/node_modules
+            ${{inputs.base_path || '.'}}/node_modules
             ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
@@ -59,7 +58,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.app-info.outputs.artifact_name }}
-          path: ${{inputs.base_path}}/build/
+          path: ${{inputs.base_path || '.'}}/build/
 
   detect-environment:
     runs-on: ubuntu-latest
