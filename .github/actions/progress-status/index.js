@@ -1,6 +1,5 @@
 const core = require("@actions/core");
 const fs = require("fs");
-const path = require("path");
 
 function renderProgressBar(completed, total) {
   const progress = Math.floor((completed / total) * 20);
@@ -18,28 +17,15 @@ async function run() {
       return;
     }
 
-    if (completedSteps > totalSteps) {
-      core.setFailed("completed_steps no puede ser mayor que total_steps.");
-      return;
-    }
-
     const progressBar = renderProgressBar(completedSteps, totalSteps);
-
-    // 📌 Forzar logs en tiempo real
-    console.log("::echo::on");
-
-    // 📌 Agregar anotación en tiempo real
-    console.log(`::notice title=📊 Progreso del Workflow:: 🚀 ${progressBar}`);
-
-    // 📌 Escribir en el "Summary" del workflow (se actualiza en tiempo real)
     const summaryFile = process.env.GITHUB_STEP_SUMMARY;
+
     if (summaryFile) {
       fs.appendFileSync(summaryFile, `### 🚀 Progreso del Workflow\n\n${progressBar}\n\n`);
     }
 
-    // 📌 Pequeño delay para asegurar que GitHub UI refresque
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
+    console.log(`::notice title=📊 Progreso:: ${progressBar}`);
+    
   } catch (error) {
     core.setFailed(error.message);
   }
